@@ -55,7 +55,7 @@ impl<const N: usize> HandlerTable<N> {
     ///
     /// Returns `true` if the event is handled, `false` if no handler is
     /// registered for the given index.
-    pub fn handle(&self, idx: usize) -> bool {
+    pub fn handle(&self, idx: usize, tf: &TrapFrame) -> bool {
         if idx >= N {
             return false;
         }
