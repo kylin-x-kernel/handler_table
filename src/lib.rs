@@ -2,11 +2,11 @@
 #![doc = include_str!("../README.md")]
 
 use core::sync::atomic::{AtomicUsize, Ordering};
-
+use axcpu::TrapFrame;
 /// The type of an event handler.
 ///
 /// Currently no arguments and return values are supported.
-pub type Handler = fn();
+pub type Handler = fn(&TrapFrame);
 
 /// A lock-free table of event handlers.
 ///
@@ -45,7 +45,7 @@ impl<const N: usize> HandlerTable<N> {
         }
         let handler = self.handlers[idx].swap(0, Ordering::Acquire);
         if handler != 0 {
-            Some(unsafe { core::mem::transmute::<usize, fn()>(handler) })
+            Some(unsafe { core::mem::transmute::<usize, fn(&TrapFrame)>(handler) })
         } else {
             None
         }
@@ -62,7 +62,7 @@ impl<const N: usize> HandlerTable<N> {
         let handler = self.handlers[idx].load(Ordering::Acquire);
         if handler != 0 {
             let handler: Handler = unsafe { core::mem::transmute(handler) };
-            handler();
+            handler(tf);
             true
         } else {
             false
