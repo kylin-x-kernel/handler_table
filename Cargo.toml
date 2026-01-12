@@ -12,3 +12,4 @@ keywords = ["arceos", "event", "lock-free"]
 categories = ["no-std"]
 
 [dependencies]
+axcpu = { version = "0.3.0", git = "https://github.com/arceos-org/axcpu.git", tag = "dev-v03" }
